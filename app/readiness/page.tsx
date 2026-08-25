@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -20,7 +20,7 @@ interface CheckItem {
   label: string;
   status: "pass" | "fail" | "warn";
   detail: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }
 
 export default function ReadinessPage() {
@@ -108,7 +108,6 @@ export default function ReadinessPage() {
       </header>
 
       <main className="max-w-lg mx-auto px-4 pt-6 space-y-6">
-        {/* Overall status */}
         <div
           className={`rounded-2xl p-5 ${
             ready
@@ -143,7 +142,6 @@ export default function ReadinessPage() {
           </div>
         </div>
 
-        {/* Individual checks */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <ul className="divide-y divide-slate-100">
             {checks.map((check) => (
