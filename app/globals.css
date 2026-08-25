@@ -13,3 +13,12 @@ body {
 .safe-pb {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* Hide scrollbar on horizontal category chips */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

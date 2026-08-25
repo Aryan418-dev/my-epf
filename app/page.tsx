@@ -37,12 +37,12 @@ export default function HomePage() {
       <Disclaimer />
 
       <header className="max-w-lg mx-auto px-4 pt-6 pb-2 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-indigo-700 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-xl bg-indigo-700 flex items-center justify-center shrink-0">
           <Shield className="w-5 h-5 text-white" />
         </div>
-        <div>
+        <div className="min-w-0">
           <h1 className="text-lg font-bold text-slate-900 tracking-tight">JANSEVA</h1>
-          <p className="text-xs text-slate-500">One place to get government work done</p>
+          <p className="text-xs text-slate-500 truncate">One place to get government work done</p>
         </div>
       </header>
 
@@ -55,18 +55,24 @@ export default function HomePage() {
             Tell us what you need. We’ll guide you through the journey.
           </p>
 
-          <form onSubmit={onSubmit} className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Tell us what you need…"
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-300 bg-white text-base focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none shadow-sm"
-            />
+          <form onSubmit={onSubmit} className="space-y-3">
+            <div className="relative">
+              <Search
+                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"
+                aria-hidden
+              />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Tell us what you need…"
+                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-300 bg-white text-base text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none shadow-sm"
+                autoComplete="off"
+              />
+            </div>
             <button
               type="submit"
-              className="mt-3 w-full bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-3 rounded-xl"
+              className="w-full bg-indigo-700 hover:bg-indigo-800 active:bg-indigo-900 text-white font-semibold py-3.5 rounded-xl"
             >
               Find services
             </button>
@@ -81,7 +87,7 @@ export default function HomePage() {
                   setQuery(ex);
                   runSearch(ex);
                 }}
-                className="text-xs px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:border-indigo-300"
+                className="text-xs px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:border-indigo-300 active:bg-slate-50"
               >
                 {ex}
               </button>
@@ -99,10 +105,10 @@ export default function HomePage() {
                 <Link
                   key={s.id}
                   href={s.href}
-                  className="block bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300"
+                  className="block bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300 active:bg-slate-50"
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold text-slate-900">{s.name}</p>
                       <p className="text-sm text-slate-600 mt-0.5">{s.description}</p>
                     </div>
@@ -126,9 +132,9 @@ export default function HomePage() {
                 <Link
                   key={c.id}
                   href={`/services?cat=${c.id}`}
-                  className="bg-white rounded-xl border border-slate-200 px-3 py-3 text-sm font-medium text-slate-800 hover:border-indigo-300"
+                  className="bg-white rounded-xl border border-slate-200 px-3 py-3 text-sm font-medium text-slate-800 hover:border-indigo-300 active:bg-slate-50"
                 >
-                  {c.name}
+                  <span className="block leading-snug">{c.name}</span>
                   <span className="block text-xs text-slate-500 font-normal mt-0.5">
                     {count > 0 ? `${count} available` : "Coming later"}
                   </span>
@@ -143,7 +149,7 @@ export default function HomePage() {
           <p className="text-sm text-slate-600">
             Discover → Understand → Apply → Track → Resolve. You don’t need to know which department owns the form.
           </p>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-3">
             <Link href="/login" className="text-sm font-medium text-indigo-700">
               Demo login →
             </Link>
