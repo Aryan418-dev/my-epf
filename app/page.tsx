@@ -1,96 +1,158 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Shield, ArrowRight, Smartphone, HelpCircle, CheckCircle2, ClipboardCheck } from "lucide-react";
+import { Search, ArrowRight, Shield } from "lucide-react";
+import Disclaimer from "@/components/Disclaimer";
+import { matchIntent } from "@/lib/intent";
+import { CATEGORIES, SERVICES } from "@/lib/services";
+import type { ServiceDef } from "@/lib/services";
+
+const EXAMPLES = [
+  "I want to track my EPF claim",
+  "I need an income certificate",
+  "I need a scholarship",
+  "Mujhe pension ka status check karna hai",
+  "I want to file a grievance",
+];
 
 export default function HomePage() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-epf-50 to-white">
-      <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-center text-sm text-amber-900">
-        Independent hackathon prototype · Not an official EPFO website
-      </div>
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<ServiceDef[] | null>(null);
+  const [message, setMessage] = useState("");
 
-      <header className="max-w-3xl mx-auto px-4 pt-8 pb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-epf-600 flex items-center justify-center">
-            <Shield className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-epf-900 tracking-tight">MyEPF</h1>
-            <p className="text-sm text-epf-700">Clearer EPF claims & status</p>
-          </div>
+  function runSearch(q: string) {
+    const r = matchIntent(q);
+    setResults(r.matched);
+    setMessage(r.message);
+  }
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    runSearch(query);
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 pb-24">
+      <Disclaimer />
+
+      <header className="max-w-lg mx-auto px-4 pt-6 pb-2 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-indigo-700 flex items-center justify-center">
+          <Shield className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <h1 className="text-lg font-bold text-slate-900 tracking-tight">JANSEVA</h1>
+          <p className="text-xs text-slate-500">One place to get government work done</p>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 pb-16">
-        <section className="mb-10">
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight mb-4">
-            Check balance.<br />Know if you are ready.<br />Track claims clearly.
+      <main className="max-w-lg mx-auto px-4 pt-4 space-y-6">
+        <section>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight mb-2">
+            What do you want to get done?
           </h2>
-          <p className="text-lg text-slate-600 mb-8 max-w-xl">
-            MyEPF reimagines the most frustrating parts of the EPFO experience —
-            so you spend less time guessing and more time getting your money.
+          <p className="text-slate-600 text-sm mb-4">
+            Tell us what you need. We’ll guide you through the journey.
           </p>
 
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-2 bg-epf-600 hover:bg-epf-700 text-white font-semibold px-6 py-3.5 rounded-xl shadow-sm transition-colors"
+          <form onSubmit={onSubmit} className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Tell us what you need…"
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-300 bg-white text-base focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none shadow-sm"
+            />
+            <button
+              type="submit"
+              className="mt-3 w-full bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-3 rounded-xl"
             >
-              Try the demo
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              href="/why"
-              className="inline-flex items-center gap-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-medium px-6 py-3.5 rounded-xl transition-colors"
-            >
-              Why this is better
-            </Link>
+              Find services
+            </button>
+          </form>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {EXAMPLES.map((ex) => (
+              <button
+                key={ex}
+                type="button"
+                onClick={() => {
+                  setQuery(ex);
+                  runSearch(ex);
+                }}
+                className="text-xs px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:border-indigo-300"
+              >
+                {ex}
+              </button>
+            ))}
           </div>
         </section>
 
-        <section className="grid gap-4 sm:grid-cols-2 mb-12">
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <ClipboardCheck className="w-8 h-8 text-epf-600 mb-3" />
-            <h3 className="font-semibold text-slate-900 mb-1">Claim readiness</h3>
-            <p className="text-sm text-slate-600">See KYC, bank and name issues before you submit — not after rejection.</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <HelpCircle className="w-8 h-8 text-epf-600 mb-3" />
-            <h3 className="font-semibold text-slate-900 mb-1">Plain-language help</h3>
-            <p className="text-sm text-slate-600">Clear reasons when something is stuck and exact next steps.</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <CheckCircle2 className="w-8 h-8 text-epf-600 mb-3" />
-            <h3 className="font-semibold text-slate-900 mb-1">Guided claims</h3>
-            <p className="text-sm text-slate-600">Simple step-by-step flow instead of confusing multi-page forms.</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <Smartphone className="w-8 h-8 text-epf-600 mb-3" />
-            <h3 className="font-semibold text-slate-900 mb-1">Mobile first</h3>
-            <p className="text-sm text-slate-600">Designed for phones and slower connections.</p>
+        {results && (
+          <section className="space-y-3">
+            <p className="text-sm text-slate-600">{message}</p>
+            {results.length === 0 ? (
+              <p className="text-sm text-slate-500">No working prototype matched. Try EPF or Certificates.</p>
+            ) : (
+              results.map((s) => (
+                <Link
+                  key={s.id}
+                  href={s.href}
+                  className="block bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-semibold text-slate-900">{s.name}</p>
+                      <p className="text-sm text-slate-600 mt-0.5">{s.description}</p>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+                  </div>
+                  <span className="inline-block mt-2 text-[11px] font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700">
+                    Working prototype
+                  </span>
+                </Link>
+              ))
+            )}
+          </section>
+        )}
+
+        <section>
+          <h3 className="text-sm font-semibold text-slate-800 mb-3">Browse by category</h3>
+          <div className="grid grid-cols-2 gap-2">
+            {CATEGORIES.map((c) => {
+              const count = SERVICES.filter((s) => s.category === c.id && s.status === "working").length;
+              return (
+                <Link
+                  key={c.id}
+                  href={`/services?cat=${c.id}`}
+                  className="bg-white rounded-xl border border-slate-200 px-3 py-3 text-sm font-medium text-slate-800 hover:border-indigo-300"
+                >
+                  {c.name}
+                  <span className="block text-xs text-slate-500 font-normal mt-0.5">
+                    {count > 0 ? `${count} available` : "Coming later"}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
-        <section className="bg-slate-50 rounded-2xl border border-slate-200 p-6 mb-8">
-          <h3 className="font-semibold text-slate-900 mb-3">Demo accounts (for reviewers)</h3>
-          <div className="space-y-2 text-sm text-slate-700">
-            <p><span className="font-mono bg-white px-2 py-0.5 rounded border">100123456789</span> / demo123 — Clean account (ready to claim)</p>
-            <p><span className="font-mono bg-white px-2 py-0.5 rounded border">100987654321</span> / demo123 — Name mismatch / rejected claim</p>
-            <p><span className="font-mono bg-white px-2 py-0.5 rounded border">100555666777</span> / demo123 — Claim in progress</p>
-          </div>
-        </section>
-
-        <section className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h3 className="font-semibold text-slate-900 mb-2">Built for Build What Moves India</h3>
+        <section className="bg-white rounded-2xl border border-slate-200 p-4">
+          <p className="text-sm font-semibold text-slate-900 mb-1">How it works</p>
           <p className="text-sm text-slate-600">
-            Complete citizen journey with mock data only. No real government systems,
-            Aadhaar, PAN or payments. Clearly labelled as an independent prototype.
+            Discover → Understand → Apply → Track → Resolve. You don’t need to know which department owns the form.
           </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link href="/login" className="text-sm font-medium text-indigo-700">
+              Demo login →
+            </Link>
+            <Link href="/epf" className="text-sm font-medium text-indigo-700">
+              Open EPF journey →
+            </Link>
+          </div>
         </section>
       </main>
-
-      <footer className="border-t border-slate-200 py-6 text-center text-sm text-slate-500">
-        Independent prototype for Build What Moves India · Not affiliated with EPFO
-      </footer>
     </div>
   );
 }
