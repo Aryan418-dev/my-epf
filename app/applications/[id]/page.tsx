@@ -1,22 +1,37 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Disclaimer from "@/components/Disclaimer";
-import { DEMO_APPLICATIONS } from "@/lib/janseva-data";
+import { getAllApplications } from "@/lib/app-store";
+import type { DemoApplication } from "@/lib/janseva-data";
 
 export default function ApplicationDetailPage() {
   const params = useParams();
   const id = params.id as string;
-  const app = DEMO_APPLICATIONS.find((a) => a.id === id);
+  const [app, setApp] = useState<DemoApplication | null | undefined>(undefined);
+
+  useEffect(() => {
+    const found = getAllApplications().find((a) => a.id === id) ?? null;
+    setApp(found);
+  }, [id]);
+
+  if (app === undefined) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center pb-24">
+        <p className="text-slate-500">Loading…</p>
+      </div>
+    );
+  }
 
   if (!app) {
     return (
-      <div className="min-h-screen bg-slate-50 p-8 text-center">
+      <div className="min-h-screen bg-slate-50 p-8 text-center pb-24">
         <p className="text-slate-600">Application not found.</p>
         <Link href="/applications" className="text-indigo-700 text-sm font-medium mt-2 inline-block">
-          Back
+          Back to applications
         </Link>
       </div>
     );
@@ -38,6 +53,7 @@ export default function ApplicationDetailPage() {
         <div className="bg-white rounded-2xl border border-slate-200 p-4">
           <p className="text-sm text-slate-500">Status</p>
           <p className="font-semibold text-slate-900 text-lg">{app.statusLabel}</p>
+          <p className="text-xs text-slate-400 font-mono mt-1">{app.id}</p>
           <div className="mt-3 h-2 bg-slate-100 rounded-full overflow-hidden">
             <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${app.progress}%` }} />
           </div>
@@ -55,7 +71,11 @@ export default function ApplicationDetailPage() {
               <li key={i} className="flex gap-3">
                 <div
                   className={`w-3 h-3 rounded-full mt-1.5 flex-shrink-0 ${
-                    step.done ? "bg-green-500" : step.current ? "bg-indigo-600 ring-4 ring-indigo-100" : "bg-slate-200"
+                    step.done
+                      ? "bg-green-500"
+                      : step.current
+                      ? "bg-indigo-600 ring-4 ring-indigo-100"
+                      : "bg-slate-200"
                   }`}
                 />
                 <div>
@@ -72,6 +92,21 @@ export default function ApplicationDetailPage() {
         {app.serviceId === "epf-claim" && (
           <Link href="/epf" className="block text-center bg-indigo-700 text-white font-semibold py-3 rounded-xl">
             Open EPF journey
+          </Link>
+        )}
+        {app.serviceId === "income-certificate" && (
+          <Link href="/services/income-certificate" className="block text-center border border-slate-300 font-medium py-3 rounded-xl">
+            Open income certificate flow
+          </Link>
+        )}
+        {app.serviceId === "scholarship" && (
+          <Link href="/services/scholarship" className="block text-center border border-slate-300 font-medium py-3 rounded-xl">
+            Open scholarship flow
+          </Link>
+        )}
+        {app.serviceId === "grievance" && (
+          <Link href="/grievances" className="block text-center border border-slate-300 font-medium py-3 rounded-xl">
+            Open grievance flow
           </Link>
         )}
       </main>
