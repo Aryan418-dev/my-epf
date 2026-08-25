@@ -92,6 +92,18 @@ export default function ReadinessPage() {
   const warnCount = checks.filter((c) => c.status === "warn").length;
   const ready = failCount === 0 && warnCount === 0;
 
+  function statusColor(status: string) {
+    if (status === "pass") return "bg-green-100 text-green-700";
+    if (status === "fail") return "bg-red-100 text-red-700";
+    return "bg-amber-100 text-amber-700";
+  }
+
+  function overallBox() {
+    if (ready) return "bg-green-50 border border-green-200";
+    if (failCount > 0) return "bg-red-50 border border-red-200";
+    return "bg-amber-50 border border-amber-200";
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 pb-16">
       <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-center text-sm text-amber-900">
@@ -108,15 +120,7 @@ export default function ReadinessPage() {
       </header>
 
       <main className="max-w-lg mx-auto px-4 pt-6 space-y-6">
-        <div
-          className={`rounded-2xl p-5 ${
-            ready
-              ? "bg-green-50 border border-green-200"
-              : failCount > 0
-              ? "bg-red-50 border border-red-200"
-              : "bg-amber-50 border border-amber-200"
-          }`}
-        >
+        <div className={`rounded-2xl p-5 ${overallBox()}`}>
           <div className="flex items-start gap-3">
             {ready ? (
               <CheckCircle2 className="w-7 h-7 text-green-600 flex-shrink-0" />
@@ -147,26 +151,14 @@ export default function ReadinessPage() {
             {checks.map((check) => (
               <li key={check.id} className="px-4 py-4 flex gap-3">
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${\n                    check.status === "pass"
-                      ? "bg-green-100 text-green-700"
-                      : check.status === "fail"
-                      ? "bg-red-100 text-red-700"
-                      : "bg-amber-100 text-amber-700"
-                  }`}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${statusColor(check.status)}`}
                 >
                   {check.icon}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-medium text-slate-900 text-sm">{check.label}</p>
-                    <span
-                      className={`text-xs font-medium px-2 py-0.5 rounded-full ${\n                        check.status === "pass"
-                          ? "bg-green-100 text-green-700"
-                          : check.status === "fail"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-amber-100 text-amber-700"
-                      }`}
-                    >
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColor(check.status)}`}>
                       {check.status === "pass" ? "OK" : check.status === "fail" ? "Fail" : "Warn"}
                     </span>
                   </div>
