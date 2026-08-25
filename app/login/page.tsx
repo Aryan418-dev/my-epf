@@ -34,9 +34,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-center text-sm text-amber-900">
-        Independent hackathon prototype · Not an official EPFO website
+    <div className="min-h-screen bg-slate-50 pb-8">
+      <div className="bg-amber-50 border-b border-amber-200 px-3 py-2 text-center text-xs sm:text-sm text-amber-900">
+        JANSEVA is an independent prototype. Not an official government service. All data is synthetic.
       </div>
 
       <div className="max-w-md mx-auto px-4 pt-8 pb-16">
@@ -46,12 +46,12 @@ export default function LoginPage() {
         </Link>
 
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-11 h-11 rounded-xl bg-epf-600 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-xl bg-indigo-700 flex items-center justify-center">
             <Shield className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Sign in to MyEPF</h1>
-            <p className="text-sm text-slate-500">Demo login — mock data only</p>
+            <h1 className="text-xl font-bold text-slate-900">EPF demo login</h1>
+            <p className="text-sm text-slate-500">JANSEVA · Mock data only</p>
           </div>
         </div>
 
@@ -64,7 +64,7 @@ export default function LoginPage() {
               value={uan}
               onChange={(e) => setUan(e.target.value)}
               placeholder="12-digit UAN"
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-epf-500 focus:ring-2 focus:ring-epf-200 outline-none"
+              className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"
             />
           </div>
           <div>
@@ -74,13 +74,13 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="demo123"
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-epf-500 focus:ring-2 focus:ring-epf-200 outline-none"
+              className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"
             />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-epf-600 hover:bg-epf-700 text-white font-semibold py-3.5 rounded-xl"
+            className="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-3.5 rounded-xl"
           >
             Sign in
           </button>
@@ -94,11 +94,11 @@ export default function LoginPage() {
                 key={acc.uan}
                 type="button"
                 onClick={() => loginWith(acc.uan)}
-                className="w-full text-left bg-white border border-slate-200 hover:border-epf-400 rounded-xl px-4 py-3 transition"
+                className="w-full text-left bg-white border border-slate-200 hover:border-indigo-400 rounded-xl px-4 py-3 transition"
               >
                 <p className="font-medium text-slate-900 text-sm">{acc.label}</p>
                 <p className="text-xs text-slate-500 mt-0.5 font-mono">{acc.uan} · demo123</p>
-                <p className="text-xs text-epf-700 mt-1">{acc.hint}</p>
+                <p className="text-xs text-indigo-700 mt-1">{acc.hint}</p>
               </button>
             ))}
           </div>
