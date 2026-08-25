@@ -1,75 +1,58 @@
-# MyEPF
+# JANSEVA
 
-**A simpler, clearer way to check your EPF balance, see if you are ready to claim, track status, and understand what to do next.**
+**One place to get government work done.**  
+*Tell us what you need. We’ll guide you through the journey.*
 
 > Independent prototype for **Build What Moves India**.  
-> **Not** an official EPFO product or website.
+> **Not** an official government service. All data is synthetic or simulated.
 
-**Live demo:** https://my-epf.vercel.app
+**Live:** https://my-epf.vercel.app  
+**Repo:** https://github.com/Aryan418-dev/my-epf
 
-## Problem
+## Product
 
-Millions of Indians struggle with the official EPFO member experience:
-- Confusing claim process
-- Unclear rejection reasons
-- KYC / name mismatch discovered only *after* rejection
-- Hard to understand status and next steps
+Citizens should not need to understand departments and portals before completing a task. JANSEVA is intent-first:
 
-## Solution (citizen journey)
+**Intent → Discovery → Eligibility → Documents → Guided application → Status → Next action**
 
-1. **Login** — 3 one-tap demo scenarios
-2. **Dashboard** — balance, service history, claim status at a glance
-3. **Claim readiness** — KYC, bank, name and open issues checked *before* you submit
-4. **Guided claim wizard** — simple 4-step flow
-5. **Help** — plain-language explanation, next steps, copyable grievance text
-6. **Why better** — side-by-side comparison for reviewers (`/why`)
+### Working journeys (deep)
+1. **EPF claim & status** — readiness, guided claim, plain-language help (from MyEPF)
+2. **Income certificate** — 5-step guided mock application
+3. **Student scholarship** — eligibility + mock submit
+4. **Grievance** — structured complaint with synthetic reference
 
-## Demo accounts
+### Platform shell
+- Intent search (English / Hindi / Hinglish rules)
+- Services catalog with Working / Coming later labels
+- My Applications + timeline
+- Government Inbox (actionable notifications)
+- Document wallet (SAMPLE only)
+- Demo profile
 
-| UAN          | Password | Scenario                    |
-|--------------|----------|-----------------------------|
-| 100123456789 | demo123  | Clean — ready to claim      |
-| 100987654321 | demo123  | Name mismatch / rejected    |
-| 100555666777 | demo123  | Claim currently processing  |
+### Mobile nav
+Home | Services | Applications | Inbox | Profile
 
-## Suggested demo path for judges
+## Demo EPF accounts
 
-1. Open https://my-epf.vercel.app → **Try the demo**
-2. Login as `100987654321` → see alert → **Check readiness** → Fail
-3. Open **Help** → Explain → copy sample grievance
-4. Logout / login as `100123456789` → readiness OK → **Start a claim** (4 steps)
-5. Optional: open `/why` for comparison table
+| UAN | Password | Scenario |
+|-----|----------|----------|
+| 100123456789 | demo123 | Clean — ready to claim |
+| 100987654321 | demo123 | Name mismatch |
+| 100555666777 | demo123 | Claim processing |
 
-## Tech
+## Stack
 
-- Next.js 15 (App Router) + TypeScript + Tailwind CSS
-- Client-side mock data only (no real government systems)
-- Deployed on Vercel
+Next.js 15 · TypeScript · Tailwind · client-side mocks (no live government APIs)
 
-## Local development
+## Local
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000
+## Safety
 
-## Compliance & limitations
-
-- All data is synthetic
-- No real Aadhaar, PAN, OTPs or payments
-- Banner on every page: independent hackathon prototype
-- Guidance is illustrative; real claims must use official EPFO channels
-
-## Submission notes
-
-- **Public URL:** https://my-epf.vercel.app
-- **Repo:** https://github.com/Aryan418-dev/my-epf
-- Complete working citizen journey (login → dashboard → readiness → claim → help)
-- Mobile-first
-- Mock-only architecture as required
-
----
-
-Built as an independent prototype for Build What Moves India.
+- No real Aadhaar, PAN, OTP, payments, or government systems
+- Banner on every screen
+- Mock submissions only
