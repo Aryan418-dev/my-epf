@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, HelpCircle } from "lucide-react";
 import Disclaimer from "@/components/Disclaimer";
+import { addApplication, addInboxItem, createSubmittedApp } from "@/lib/app-store";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -15,7 +16,32 @@ export default function IncomeCertificatePage() {
   const [ref, setRef] = useState("");
 
   function submit() {
-    setRef("INC-MOCK-" + Date.now().toString().slice(-6));
+    const r = "INC-MOCK-" + Date.now().toString().slice(-6);
+    setRef(r);
+    const app = createSubmittedApp({
+      serviceId: "income-certificate",
+      title: "Income Certificate",
+      ref: r,
+    });
+    app.progress = 70;
+    app.status = "verification";
+    app.statusLabel = "Verification";
+    app.nextAction = "Wait for tehsil verification (mock)";
+    app.timeline = [
+      { label: "Submitted", done: true },
+      { label: "Documents checked", done: true },
+      { label: "Verification", done: false, current: true },
+      { label: "Processing", done: false },
+      { label: "Decision", done: false },
+    ];
+    addApplication(app);
+    addInboxItem({
+      id: "inbox-" + r,
+      service: "Income Certificate",
+      message: `Application ${r} is in verification.`,
+      actionLabel: "View",
+      href: `/applications/${r}`,
+    });
     setStep(5);
   }
 
@@ -63,39 +89,22 @@ export default function IncomeCertificatePage() {
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-slate-900">Eligibility (demo)</h2>
             <label className="block text-sm font-medium text-slate-700">State</label>
-            <select
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white"
-            >
+            <select value={state} onChange={(e) => setState(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white">
               <option>Madhya Pradesh</option>
               <option>Maharashtra</option>
               <option>Uttar Pradesh</option>
               <option>Other (demo)</option>
             </select>
             <label className="block text-sm font-medium text-slate-700">Purpose</label>
-            <select
-              value={purpose}
-              onChange={(e) => setPurpose(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white"
-            >
+            <select value={purpose} onChange={(e) => setPurpose(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white">
               <option value="">Select…</option>
               <option value="scholarship">Scholarship</option>
               <option value="scheme">Welfare scheme</option>
               <option value="other">Other</option>
             </select>
             <div className="flex gap-3">
-              <button type="button" onClick={() => setStep(1)} className="flex-1 border border-slate-300 py-3 rounded-xl font-medium">
-                Back
-              </button>
-              <button
-                type="button"
-                disabled={!purpose}
-                onClick={() => setStep(3)}
-                className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl disabled:opacity-50"
-              >
-                Continue
-              </button>
+              <button type="button" onClick={() => setStep(1)} className="flex-1 border border-slate-300 py-3 rounded-xl font-medium">Back</button>
+              <button type="button" disabled={!purpose} onClick={() => setStep(3)} className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl disabled:opacity-50">Continue</button>
             </div>
           </div>
         )}
@@ -103,33 +112,17 @@ export default function IncomeCertificatePage() {
         {step === 3 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-slate-900">Documents & income</h2>
-            <p className="text-sm text-slate-600">Checklist (all sample — do not upload real IDs):</p>
+            <p className="text-sm text-slate-600">Checklist (sample — do not upload real IDs):</p>
             <ul className="text-sm text-slate-700 space-y-1 list-disc list-inside">
               <li>Aadhaar — SAMPLE</li>
               <li>Address proof — SAMPLE</li>
-              <li>Income proof (salary slip / self-declaration) — SAMPLE</li>
+              <li>Income proof — SAMPLE</li>
             </ul>
             <label className="block text-sm font-medium text-slate-700">Annual family income (₹)</label>
-            <input
-              type="number"
-              inputMode="numeric"
-              value={income}
-              onChange={(e) => setIncome(e.target.value)}
-              placeholder="e.g. 250000"
-              className="w-full px-4 py-3 rounded-xl border border-slate-300"
-            />
+            <input type="number" inputMode="numeric" value={income} onChange={(e) => setIncome(e.target.value)} placeholder="e.g. 250000" className="w-full px-4 py-3 rounded-xl border border-slate-300" />
             <div className="flex gap-3">
-              <button type="button" onClick={() => setStep(2)} className="flex-1 border border-slate-300 py-3 rounded-xl font-medium">
-                Back
-              </button>
-              <button
-                type="button"
-                disabled={!income || Number(income) <= 0}
-                onClick={() => setStep(4)}
-                className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl disabled:opacity-50"
-              >
-                Continue
-              </button>
+              <button type="button" onClick={() => setStep(2)} className="flex-1 border border-slate-300 py-3 rounded-xl font-medium">Back</button>
+              <button type="button" disabled={!income || Number(income) <= 0} onClick={() => setStep(4)} className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl disabled:opacity-50">Continue</button>
             </div>
           </div>
         )}
@@ -142,14 +135,10 @@ export default function IncomeCertificatePage() {
               <p><span className="text-slate-500">Purpose:</span> {purpose}</p>
               <p><span className="text-slate-500">Family income:</span> ₹{Number(income).toLocaleString("en-IN")}</p>
             </div>
-            <p className="text-xs text-slate-500">Mock submission only. No real government application is filed.</p>
+            <p className="text-xs text-slate-500">Mock only. Saves to Applications on this device.</p>
             <div className="flex gap-3">
-              <button type="button" onClick={() => setStep(3)} className="flex-1 border border-slate-300 py-3 rounded-xl font-medium">
-                Back
-              </button>
-              <button type="button" onClick={submit} className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl">
-                Submit (mock)
-              </button>
+              <button type="button" onClick={() => setStep(3)} className="flex-1 border border-slate-300 py-3 rounded-xl font-medium">Back</button>
+              <button type="button" onClick={submit} className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl">Submit (mock)</button>
             </div>
           </div>
         )}
@@ -160,11 +149,9 @@ export default function IncomeCertificatePage() {
               <CheckCircle2 className="w-7 h-7 text-green-600" />
             </div>
             <h2 className="text-xl font-bold text-slate-900">Application submitted</h2>
-            <p className="text-sm text-slate-600">Synthetic reference</p>
             <p className="font-mono text-indigo-700 font-semibold">{ref}</p>
-            <p className="text-sm text-slate-600">Typical processing: 7–21 working days (illustrative).</p>
-            <Link href="/applications" className="inline-block bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl">
-              View applications
+            <Link href={`/applications/${ref}`} className="inline-block bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl">
+              View application
             </Link>
           </div>
         )}

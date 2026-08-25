@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Disclaimer from "@/components/Disclaimer";
+import { addApplication, addInboxItem, createSubmittedApp } from "@/lib/app-store";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -14,7 +15,32 @@ export default function ScholarshipPage() {
   const [ref, setRef] = useState("");
 
   function submit() {
-    setRef("SCH-MOCK-" + Date.now().toString().slice(-6));
+    const r = "SCH-MOCK-" + Date.now().toString().slice(-6);
+    setRef(r);
+    const app = createSubmittedApp({
+      serviceId: "scholarship",
+      title: "Student Scholarship",
+      ref: r,
+    });
+    app.progress = 40;
+    app.status = "action_required";
+    app.statusLabel = "Documents required";
+    app.nextAction = "Upload income certificate (sample)";
+    app.timeline = [
+      { label: "Submitted", done: true },
+      { label: "Documents checked", done: false, current: true },
+      { label: "Verification", done: false },
+      { label: "Processing", done: false },
+      { label: "Decision", done: false },
+    ];
+    addApplication(app);
+    addInboxItem({
+      id: "inbox-" + r,
+      service: "Scholarship",
+      message: "Income certificate is missing.",
+      actionLabel: "Fix this",
+      href: `/applications/${r}`,
+    });
     setStep(4);
   }
 
@@ -63,25 +89,11 @@ export default function ScholarshipPage() {
         {step === 2 && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-slate-900">Year of study</h2>
-            <input
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              placeholder="e.g. 2nd year"
-              className="w-full px-4 py-3 rounded-xl border border-slate-300"
-            />
-            <p className="text-sm text-slate-600">Required documents (sample): income certificate, marksheet, ID proof.</p>
+            <input value={year} onChange={(e) => setYear(e.target.value)} placeholder="e.g. 2nd year" className="w-full px-4 py-3 rounded-xl border border-slate-300" />
+            <p className="text-sm text-slate-600">Required (sample): income certificate, marksheet, ID proof.</p>
             <div className="flex gap-3">
-              <button type="button" onClick={() => setStep(1)} className="flex-1 border border-slate-300 py-3 rounded-xl">
-                Back
-              </button>
-              <button
-                type="button"
-                disabled={!year.trim()}
-                onClick={() => setStep(3)}
-                className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl disabled:opacity-50"
-              >
-                Continue
-              </button>
+              <button type="button" onClick={() => setStep(1)} className="flex-1 border border-slate-300 py-3 rounded-xl">Back</button>
+              <button type="button" disabled={!year.trim()} onClick={() => setStep(3)} className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl disabled:opacity-50">Continue</button>
             </div>
           </div>
         )}
@@ -94,14 +106,9 @@ export default function ScholarshipPage() {
               <p><span className="text-slate-500">Year:</span> {year}</p>
               <p><span className="text-slate-500">State:</span> Madhya Pradesh (demo profile)</p>
             </div>
-            <p className="text-xs text-slate-500">Mock only. Inbox may show “income certificate missing” for this demo scenario.</p>
             <div className="flex gap-3">
-              <button type="button" onClick={() => setStep(2)} className="flex-1 border border-slate-300 py-3 rounded-xl">
-                Back
-              </button>
-              <button type="button" onClick={submit} className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl">
-                Submit (mock)
-              </button>
+              <button type="button" onClick={() => setStep(2)} className="flex-1 border border-slate-300 py-3 rounded-xl">Back</button>
+              <button type="button" onClick={submit} className="flex-1 bg-indigo-700 text-white font-semibold py-3 rounded-xl">Submit (mock)</button>
             </div>
           </div>
         )}
@@ -113,6 +120,7 @@ export default function ScholarshipPage() {
             </div>
             <h2 className="text-xl font-bold text-slate-900">Application recorded</h2>
             <p className="font-mono text-indigo-700 font-semibold">{ref}</p>
+            <p className="text-sm text-slate-600">Inbox will show “income certificate missing”.</p>
             <Link href="/inbox" className="inline-block bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl">
               Check inbox
             </Link>

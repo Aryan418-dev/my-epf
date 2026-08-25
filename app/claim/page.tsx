@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, AlertTriangle } from "lucide-react";
 import { MOCK_USERS, formatINR, type User } from "@/lib/mock-data";
+import { addApplication, addInboxItem, createSubmittedApp } from "@/lib/app-store";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -37,7 +38,32 @@ export default function ClaimPage() {
   const canClaim = user.kycStatus === "verified" && user.issues.length === 0;
 
   function handleSubmit() {
-    setRefNo("CLM-MOCK-" + Date.now().toString().slice(-6));
+    const ref = "CLM-MOCK-" + Date.now().toString().slice(-6);
+    setRefNo(ref);
+    const app = createSubmittedApp({
+      serviceId: "epf-claim",
+      title: `EPF · ${claimType}`,
+      ref,
+    });
+    app.progress = 55;
+    app.status = "processing";
+    app.statusLabel = "Under review";
+    app.nextAction = "Track on EPF dashboard or Applications";
+    app.timeline = [
+      { label: "Submitted", done: true },
+      { label: "Documents checked", done: true },
+      { label: "Verification", done: false, current: true },
+      { label: "Processing", done: false },
+      { label: "Decision", done: false },
+    ];
+    addApplication(app);
+    addInboxItem({
+      id: "inbox-" + ref,
+      service: "EPF",
+      message: `Claim ${ref} submitted and under review.`,
+      actionLabel: "Track claim",
+      href: `/applications/${ref}`,
+    });
     setSubmitted(true);
   }
 
@@ -52,9 +78,7 @@ export default function ClaimPage() {
             <CheckCircle2 className="w-8 h-8 text-green-600" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Claim submitted</h1>
-          <p className="text-slate-600 mb-6">
-            Mock submission only. No real claim was filed with EPFO.
-          </p>
+          <p className="text-slate-600 mb-6">Saved to My Applications and Inbox (this device).</p>
           <div className="bg-white rounded-2xl border border-slate-200 p-5 text-left mb-8">
             <p className="text-sm text-slate-500">Claim type</p>
             <p className="font-medium text-slate-900">{claimType}</p>
@@ -65,13 +89,13 @@ export default function ClaimPage() {
           </div>
           <div className="flex flex-col gap-3">
             <Link
-              href="/dashboard"
+              href={`/applications/${refNo}`}
               className="inline-flex items-center justify-center bg-indigo-700 hover:bg-indigo-800 text-white font-semibold px-6 py-3 rounded-xl"
             >
-              Back to dashboard
+              View in Applications
             </Link>
-            <Link href="/applications" className="text-sm font-medium text-indigo-700">
-              View applications →
+            <Link href="/dashboard" className="text-sm font-medium text-indigo-700">
+              Back to dashboard →
             </Link>
           </div>
         </div>
@@ -100,10 +124,7 @@ export default function ClaimPage() {
       <main className="max-w-lg mx-auto px-4 pt-6">
         <div className="flex gap-2 mb-8">
           {[1, 2, 3, 4].map((s) => (
-            <div
-              key={s}
-              className={`h-1.5 flex-1 rounded-full ${s <= step ? "bg-indigo-600" : "bg-slate-200"}`}
-            />
+            <div key={s} className={`h-1.5 flex-1 rounded-full ${s <= step ? "bg-indigo-600" : "bg-slate-200"}`} />
           ))}
         </div>
 
@@ -113,7 +134,7 @@ export default function ClaimPage() {
             <div>
               <p className="font-semibold text-amber-900 text-sm">You may face rejection</p>
               <p className="text-sm text-amber-800 mt-1">
-                Your account has KYC or name issues. You can still preview the flow; in real life fix these first.
+                KYC or name issues on this account. You can still preview the flow.
               </p>
               <Link href="/help" className="text-sm font-medium text-amber-900 underline mt-2 inline-block">
                 How to fix issues →
@@ -225,7 +246,7 @@ export default function ClaimPage() {
                 <span className="font-medium text-slate-900">····{user.bankLast4}</span>
               </div>
             </div>
-            <p className="text-xs text-slate-500">Mock submission for the demo. No real claim is filed with EPFO.</p>
+            <p className="text-xs text-slate-500">Mock submission. Will appear in Applications and Inbox on this device.</p>
             <div className="flex gap-3">
               <button type="button" onClick={() => setStep(3)} className="flex-1 py-3 rounded-xl border border-slate-300 font-medium text-slate-700">
                 Back
