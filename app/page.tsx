@@ -30,13 +30,21 @@ export default function HomePage() {
             so you spend less time guessing and more time getting your money.
           </p>
 
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 bg-epf-600 hover:bg-epf-700 text-white font-semibold px-6 py-3.5 rounded-xl shadow-sm transition-colors"
-          >
-            Try the demo
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 bg-epf-600 hover:bg-epf-700 text-white font-semibold px-6 py-3.5 rounded-xl shadow-sm transition-colors"
+            >
+              Try the demo
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/why"
+              className="inline-flex items-center gap-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-medium px-6 py-3.5 rounded-xl transition-colors"
+            >
+              Why this is better
+            </Link>
+          </div>
         </section>
 
         <section className="grid gap-4 sm:grid-cols-2 mb-12">
@@ -72,13 +80,11 @@ export default function HomePage() {
         </section>
 
         <section className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h3 className="font-semibold text-slate-900 mb-2">Why this is better</h3>
-          <ul className="text-sm text-slate-600 space-y-2 list-disc list-inside">
-            <li>Shows problems <em>before</em> you file a claim</li>
-            <li>Explains rejections in plain language with next actions</li>
-            <li>One clear mobile journey instead of scattered pages</li>
-            <li>Mock data only — no real Aadhaar, PAN or government systems</li>
-          </ul>
+          <h3 className="font-semibold text-slate-900 mb-2">Built for Build What Moves India</h3>
+          <p className="text-sm text-slate-600">
+            Complete citizen journey with mock data only. No real government systems,
+            Aadhaar, PAN or payments. Clearly labelled as an independent prototype.
+          </p>
         </section>
       </main>
 
