@@ -13,6 +13,7 @@ import {
   Clock,
   ChevronRight,
   Building2,
+  ClipboardCheck,
 } from "lucide-react";
 import { MOCK_USERS, formatINR, type User } from "@/lib/mock-data";
 
@@ -52,7 +53,6 @@ export default function DashboardPage() {
         Independent hackathon prototype · Not an official EPFO website
       </div>
 
-      {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -101,10 +101,10 @@ export default function DashboardPage() {
                   ))}
                 </ul>
                 <Link
-                  href="/help"
+                  href="/readiness"
                   className="inline-flex items-center gap-1 text-sm font-medium text-amber-900 mt-2 hover:underline"
                 >
-                  See what to do next <ChevronRight className="w-4 h-4" />
+                  Check readiness <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
@@ -136,6 +136,12 @@ export default function DashboardPage() {
                       <span className="font-medium">Next step:</span> {rejectedClaim.nextAction}
                     </p>
                   )}
+                  <Link
+                    href="/help"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-epf-700 mt-1 hover:underline"
+                  >
+                    How to fix this <ChevronRight className="w-4 h-4" />
+                  </Link>
                 </div>
               )}
               {activeClaim && !rejectedClaim && (
@@ -159,6 +165,15 @@ export default function DashboardPage() {
         {/* Quick actions */}
         <div className="grid grid-cols-2 gap-3">
           <Link
+            href="/readiness"
+            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-epf-300 transition flex flex-col items-start gap-2"
+          >
+            <div className="w-9 h-9 rounded-lg bg-epf-100 flex items-center justify-center">
+              <ClipboardCheck className="w-5 h-5 text-epf-700" />
+            </div>
+            <span className="font-medium text-slate-900 text-sm">Check readiness</span>
+          </Link>
+          <Link
             href="/claim"
             className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-epf-300 transition flex flex-col items-start gap-2"
           >
@@ -169,12 +184,12 @@ export default function DashboardPage() {
           </Link>
           <Link
             href="/help"
-            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-epf-300 transition flex flex-col items-start gap-2"
+            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-epf-300 transition flex flex-col items-start gap-2 col-span-2"
           >
             <div className="w-9 h-9 rounded-lg bg-epf-100 flex items-center justify-center">
               <CheckCircle2 className="w-5 h-5 text-epf-700" />
             </div>
-            <span className="font-medium text-slate-900 text-sm">Get help</span>
+            <span className="font-medium text-slate-900 text-sm">Get help & next steps</span>
           </Link>
         </div>
 
