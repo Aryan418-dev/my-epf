@@ -1,4 +1,4 @@
-# JANSEVA
+# JANSEVA (LogSeva)
 
 **One place to get government work done.**  
 *Tell us what you need. We’ll guide you through the journey.*
@@ -6,7 +6,7 @@
 > Independent prototype for **Build What Moves India**.  
 > **Not** an official government service. All data is synthetic or simulated.
 
-**Live:** https://my-epf.vercel.app  
+**Live:** https://logseva.vercel.app  
 **Repo:** https://github.com/Aryan418-dev/my-epf
 
 ## Product
@@ -16,21 +16,19 @@ Citizens should not need to understand departments and portals before completing
 **Intent → Discovery → Eligibility → Documents → Guided application → Status → Next action**
 
 ### Working journeys (deep)
-1. **EPF claim & status** — readiness, guided claim, plain-language help (from MyEPF)
+1. **EPF claim & status** — readiness score, guided claim, plain-language help
 2. **Income certificate** — 5-step guided mock application
 3. **Student scholarship** — eligibility + mock submit
 4. **Grievance** — structured complaint with synthetic reference
 
 ### Platform shell
 - Intent search (English / Hindi / Hinglish rules)
-- Services catalog with Working / Coming later labels
+- Services catalog (Working vs Coming later)
 - My Applications + timeline
-- Government Inbox (actionable notifications)
+- Government Inbox
 - Document wallet (SAMPLE only)
 - Demo profile
-
-### Mobile nav
-Home | Services | Applications | Inbox | Profile
+- Mobile nav: Home | Services | Applications | Inbox | Profile
 
 ## Demo EPF accounts
 

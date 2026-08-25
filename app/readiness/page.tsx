@@ -21,6 +21,7 @@ interface CheckItem {
   status: "pass" | "fail" | "warn";
   detail: string;
   icon: ReactNode;
+  weight: number;
 }
 
 export default function ReadinessPage() {
@@ -38,7 +39,7 @@ export default function ReadinessPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 pb-24">
         <p className="text-slate-500">Loading...</p>
       </div>
     );
@@ -56,6 +57,7 @@ export default function ReadinessPage() {
           ? "Name or details do not match Aadhaar. Claims will likely be rejected."
           : "KYC is still pending verification.",
       icon: <User className="w-5 h-5" />,
+      weight: 35,
     },
     {
       id: "bank",
@@ -65,6 +67,7 @@ export default function ReadinessPage() {
         ? `Account ending ····${user.bankLast4} is linked.`
         : "No bank account found. Add one before claiming.",
       icon: <CreditCard className="w-5 h-5" />,
+      weight: 25,
     },
     {
       id: "employer",
@@ -75,6 +78,7 @@ export default function ReadinessPage() {
           ? `${user.serviceHistory.length} establishment(s) on record.`
           : "No service history found.",
       icon: <Building2 className="w-5 h-5" />,
+      weight: 20,
     },
     {
       id: "issues",
@@ -85,8 +89,18 @@ export default function ReadinessPage() {
           ? "No open issues on this account."
           : user.issues.join("; "),
       icon: <Shield className="w-5 h-5" />,
+      weight: 20,
     },
   ];
+
+  // Score from actual rules: pass = full weight, warn = half, fail = 0
+  const score = Math.round(
+    checks.reduce((sum, c) => {
+      if (c.status === "pass") return sum + c.weight;
+      if (c.status === "warn") return sum + c.weight * 0.5;
+      return sum;
+    }, 0)
+  );
 
   const failCount = checks.filter((c) => c.status === "fail").length;
   const warnCount = checks.filter((c) => c.status === "warn").length;
@@ -105,9 +119,9 @@ export default function ReadinessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-16">
-      <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-center text-sm text-amber-900">
-        Independent hackathon prototype · Not an official EPFO website
+    <div className="min-h-screen bg-slate-50 pb-24">
+      <div className="bg-amber-50 border-b border-amber-200 px-3 py-2 text-center text-xs sm:text-sm text-amber-900">
+        JANSEVA is an independent prototype. Not an official government service. All data is synthetic.
       </div>
 
       <header className="bg-white border-b border-slate-200">
@@ -129,19 +143,23 @@ export default function ReadinessPage() {
             ) : (
               <AlertTriangle className="w-7 h-7 text-amber-600 flex-shrink-0" />
             )}
-            <div>
-              <p className="font-bold text-slate-900 text-lg">
-                {ready
-                  ? "You are ready to claim"
-                  : failCount > 0
-                  ? "Fix these issues first"
-                  : "Almost ready – check warnings"}
-              </p>
+            <div className="flex-1">
+              <p className="font-bold text-slate-900 text-lg">Claim readiness: {score}%</p>
               <p className="text-sm text-slate-600 mt-1">
                 {ready
                   ? "All key checks passed. You can start a claim with lower risk of rejection."
-                  : "EPFO often rejects claims when KYC or name details do not match. Fix the failed items before submitting."}
+                  : failCount > 0
+                  ? "Fix failed items before submitting — EPFO often rejects mismatched KYC/name claims."
+                  : "Almost ready — review warnings below."}
               </p>
+              <div className="mt-3 h-2.5 bg-white/60 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    score >= 90 ? "bg-green-600" : score >= 60 ? "bg-amber-500" : "bg-red-500"
+                  }`}
+                  style={{ width: `${score}%` }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -169,18 +187,29 @@ export default function ReadinessPage() {
           </ul>
         </div>
 
+        <div className="bg-white rounded-2xl border border-slate-200 p-4">
+          <p className="font-semibold text-slate-900 text-sm mb-1">What you should do next</p>
+          <p className="text-sm text-slate-600">
+            {ready
+              ? "Start a claim from the guided wizard. Keep bank details ready."
+              : failCount > 0
+              ? "Resolve name/KYC or bank issues first, then re-check readiness."
+              : "Review warnings, then decide if you still want to file."}
+          </p>
+        </div>
+
         <div className="flex flex-col gap-3">
           {ready ? (
             <Link
               href="/claim"
-              className="w-full text-center bg-epf-600 hover:bg-epf-700 text-white font-semibold py-3.5 rounded-xl"
+              className="w-full text-center bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-3.5 rounded-xl"
             >
               Start claim
             </Link>
           ) : (
             <Link
               href="/help"
-              className="w-full text-center bg-epf-600 hover:bg-epf-700 text-white font-semibold py-3.5 rounded-xl"
+              className="w-full text-center bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-3.5 rounded-xl"
             >
               See how to fix issues
             </Link>
@@ -190,6 +219,9 @@ export default function ReadinessPage() {
             className="w-full text-center border border-slate-300 text-slate-700 font-medium py-3 rounded-xl"
           >
             Back to dashboard
+          </Link>
+          <Link href="/epf" className="w-full text-center text-sm text-indigo-700 font-medium py-1">
+            EPF hub
           </Link>
         </div>
       </main>
