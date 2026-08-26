@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Shield, ArrowLeft } from "lucide-react";
 import { MOCK_USERS } from "@/lib/mock-data";
@@ -12,8 +12,10 @@ const DEMO_ACCOUNTS = [
   { uan: "100555666777", label: "Claim in progress", hint: "Processing status on dashboard" },
 ];
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") || "/dashboard";
   const [uan, setUan] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -25,7 +27,8 @@ export default function LoginPage() {
       return;
     }
     localStorage.setItem("myepf_uan", u);
-    router.push("/dashboard");
+    const safe = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+    router.push(safe);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -46,16 +49,35 @@ export default function LoginPage() {
         </Link>
 
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-11 h-11 rounded-xl bg-indigo-700 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-xl bg-indigo-700 flex items-center justify-center shrink-0">
             <Shield className="w-6 h-6 text-white" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-slate-900">EPF demo login</h1>
-            <p className="text-sm text-slate-500">JANSEVA · Mock data only</p>
+            <p className="text-sm text-slate-500">JANSEVA · One tap below is enough</p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4 mb-8">
+        <div className="mb-8">
+          <p className="text-sm font-medium text-slate-700 mb-3">Quick demo accounts</p>
+          <div className="space-y-2">
+            {DEMO_ACCOUNTS.map((acc) => (
+              <button
+                key={acc.uan}
+                type="button"
+                onClick={() => loginWith(acc.uan)}
+                className="w-full text-left bg-white border border-slate-200 hover:border-indigo-400 active:bg-slate-50 rounded-xl px-4 py-3.5 transition"
+              >
+                <p className="font-medium text-slate-900 text-sm">{acc.label}</p>
+                <p className="text-xs text-slate-500 mt-0.5 font-mono">{acc.uan} · demo123</p>
+                <p className="text-xs text-indigo-700 mt-1">{acc.hint}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Or enter manually</p>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">UAN</label>
             <input
@@ -86,28 +108,18 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div>
-          <p className="text-sm font-medium text-slate-700 mb-3">Quick demo accounts</p>
-          <div className="space-y-2">
-            {DEMO_ACCOUNTS.map((acc) => (
-              <button
-                key={acc.uan}
-                type="button"
-                onClick={() => loginWith(acc.uan)}
-                className="w-full text-left bg-white border border-slate-200 hover:border-indigo-400 rounded-xl px-4 py-3 transition"
-              >
-                <p className="font-medium text-slate-900 text-sm">{acc.label}</p>
-                <p className="text-xs text-slate-500 mt-0.5 font-mono">{acc.uan} · demo123</p>
-                <p className="text-xs text-indigo-700 mt-1">{acc.hint}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-
         <p className="text-center text-xs text-slate-400 mt-8">
           No real OTPs, Aadhaar or EPFO systems are used.
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-500">Loading…</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Building2,
   ClipboardCheck,
+  Home,
 } from "lucide-react";
 import { MOCK_USERS, formatINR, type User } from "@/lib/mock-data";
 
@@ -24,7 +25,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const uan = localStorage.getItem("myepf_uan");
     if (!uan || !MOCK_USERS[uan]) {
-      router.replace("/login");
+      router.replace("/login?next=/dashboard");
       return;
     }
     setUser(MOCK_USERS[uan]);
@@ -32,7 +33,7 @@ export default function DashboardPage() {
 
   function handleLogout() {
     localStorage.removeItem("myepf_uan");
-    router.push("/");
+    router.push("/epf");
   }
 
   if (!user) {
@@ -55,22 +56,27 @@ export default function DashboardPage() {
 
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-indigo-700 flex items-center justify-center">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-lg bg-indigo-700 flex items-center justify-center shrink-0">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold text-slate-900 text-sm">JANSEVA · EPF</p>
-              <p className="text-xs text-slate-500">{user.name}</p>
+              <p className="text-xs text-slate-500 truncate">{user.name}</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 px-2 py-1.5 rounded-lg hover:bg-slate-100"
-          >
-            <LogOut className="w-4 h-4" />
-            Logout
-          </button>
+          <div className="flex items-center gap-1 shrink-0">
+            <Link href="/" className="p-2 rounded-lg hover:bg-slate-100 text-slate-600" aria-label="Home">
+              <Home className="w-4 h-4" />
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 px-2 py-1.5 rounded-lg hover:bg-slate-100"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 
@@ -118,9 +124,9 @@ export default function DashboardPage() {
             <div className="p-4">
               {rejectedClaim && (
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <p className="font-medium text-slate-900">{rejectedClaim.type}</p>
-                    <span className="text-xs font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded-full shrink-0">
                       Rejected
                     </span>
                   </div>
@@ -143,9 +149,9 @@ export default function DashboardPage() {
               )}
               {activeClaim && !rejectedClaim && (
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <p className="font-medium text-slate-900">{activeClaim.type}</p>
-                    <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0">
                       <Clock className="w-3 h-3" /> Processing
                     </span>
                   </div>
@@ -164,7 +170,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 gap-3">
           <Link
             href="/readiness"
-            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300 transition flex flex-col items-start gap-2"
+            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300 transition flex flex-col items-start gap-2 active:bg-slate-50"
           >
             <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center">
               <ClipboardCheck className="w-5 h-5 text-indigo-700" />
@@ -173,7 +179,7 @@ export default function DashboardPage() {
           </Link>
           <Link
             href="/claim"
-            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300 transition flex flex-col items-start gap-2"
+            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300 transition flex flex-col items-start gap-2 active:bg-slate-50"
           >
             <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center">
               <FileText className="w-5 h-5 text-indigo-700" />
@@ -182,12 +188,21 @@ export default function DashboardPage() {
           </Link>
           <Link
             href="/help"
-            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300 transition flex flex-col items-start gap-2 col-span-2"
+            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:border-indigo-300 transition flex flex-col items-start gap-2 col-span-2 active:bg-slate-50"
           >
             <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center">
               <CheckCircle2 className="w-5 h-5 text-indigo-700" />
             </div>
             <span className="font-medium text-slate-900 text-sm">Get help & next steps</span>
+          </Link>
+        </div>
+
+        <div className="flex gap-2">
+          <Link href="/applications" className="flex-1 text-center text-sm font-medium text-indigo-700 bg-white border border-slate-200 rounded-xl py-3">
+            Applications
+          </Link>
+          <Link href="/inbox" className="flex-1 text-center text-sm font-medium text-indigo-700 bg-white border border-slate-200 rounded-xl py-3">
+            Inbox
           </Link>
         </div>
 

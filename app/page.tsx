@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Search, ArrowRight, Shield } from "lucide-react";
+import { Search, ArrowRight, Shield, Zap } from "lucide-react";
 import Disclaimer from "@/components/Disclaimer";
 import { matchIntent } from "@/lib/intent";
 import { CATEGORIES, SERVICES } from "@/lib/services";
+import { MOCK_USERS } from "@/lib/mock-data";
 import type { ServiceDef } from "@/lib/services";
 
 const EXAMPLES = [
@@ -20,11 +21,21 @@ export default function HomePage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ServiceDef[] | null>(null);
   const [message, setMessage] = useState("");
+  const [sessionName, setSessionName] = useState<string | null>(null);
+  const resultsRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const uan = localStorage.getItem("myepf_uan");
+    if (uan && MOCK_USERS[uan]) setSessionName(MOCK_USERS[uan].name);
+  }, []);
 
   function runSearch(q: string) {
     const r = matchIntent(q);
     setResults(r.matched);
     setMessage(r.message);
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   }
 
   function onSubmit(e: React.FormEvent) {
@@ -40,13 +51,45 @@ export default function HomePage() {
         <div className="w-10 h-10 rounded-xl bg-indigo-700 flex items-center justify-center shrink-0">
           <Shield className="w-5 h-5 text-white" />
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="text-lg font-bold text-slate-900 tracking-tight">JANSEVA</h1>
           <p className="text-xs text-slate-500 truncate">One place to get government work done</p>
         </div>
+        {sessionName && (
+          <Link href="/dashboard" className="text-xs font-medium text-indigo-700 bg-indigo-50 px-2.5 py-1.5 rounded-lg shrink-0">
+            EPF · {sessionName.split(" ")[0]}
+          </Link>
+        )}
       </header>
 
       <main className="max-w-lg mx-auto px-4 pt-4 space-y-6">
+        <section className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Zap className="w-4 h-4 text-indigo-700" />
+            <p className="text-sm font-semibold text-indigo-900">Quick start (demo)</p>
+          </div>
+          <div className="grid grid-cols-1 gap-2">
+            <Link
+              href="/epf"
+              className="bg-white rounded-xl px-4 py-3 text-sm font-medium text-slate-900 border border-indigo-100 active:bg-slate-50"
+            >
+              1. EPF journey (readiness + claim) →
+            </Link>
+            <Link
+              href="/services/income-certificate"
+              className="bg-white rounded-xl px-4 py-3 text-sm font-medium text-slate-900 border border-indigo-100 active:bg-slate-50"
+            >
+              2. Income certificate →
+            </Link>
+            <Link
+              href="/applications"
+              className="bg-white rounded-xl px-4 py-3 text-sm font-medium text-slate-900 border border-indigo-100 active:bg-slate-50"
+            >
+              3. Track applications & inbox →
+            </Link>
+          </div>
+        </section>
+
         <section>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight mb-2">
             What do you want to get done?
@@ -96,7 +139,7 @@ export default function HomePage() {
         </section>
 
         {results && (
-          <section className="space-y-3">
+          <section ref={resultsRef} className="space-y-3 scroll-mt-4">
             <p className="text-sm text-slate-600">{message}</p>
             {results.length === 0 ? (
               <p className="text-sm text-slate-500">No working prototype matched. Try EPF or Certificates.</p>
@@ -149,14 +192,6 @@ export default function HomePage() {
           <p className="text-sm text-slate-600">
             Discover → Understand → Apply → Track → Resolve. You don’t need to know which department owns the form.
           </p>
-          <div className="mt-3 flex flex-wrap gap-3">
-            <Link href="/login" className="text-sm font-medium text-indigo-700">
-              Demo login →
-            </Link>
-            <Link href="/epf" className="text-sm font-medium text-indigo-700">
-              Open EPF journey →
-            </Link>
-          </div>
         </section>
       </main>
     </div>
